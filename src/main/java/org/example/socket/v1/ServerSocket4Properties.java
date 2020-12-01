@@ -1,12 +1,11 @@
 package org.example.socket.v1;
 
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
 
 /**
  * @Author qiu
@@ -71,20 +70,25 @@ public class ServerSocket4Properties {
 
                 new Thread(() -> {
                     try {
+                        System.out.println("client: " + client);
                         InputStream inputStream = client.getInputStream();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                         while (true) {
-                            String data = reader.readLine();
-                            if(data != null) {
+                            byte[] bytes = new byte[4096];
+                            int size = inputStream.read(bytes);
+                            if(size < 0) {
                                 client.close();
+                                System.out.println("client closed.....");
                                 break;
+                            } else if(size == 0) {
+                                break;
+                            } else {
+                                System.out.println("client send msg: " + new String(bytes, 0, size, Charset.defaultCharset()));
                             }
-                            System.out.println("client read some data is :" + data.length() + " val :" + data);
                         }
                     } catch (IOException e) {
                         System.out.println("IOException e:" + e.toString());
                     }
-                });
+                }).start();
             }
         } catch (IOException e) {
             System.out.println("IOException e:" + e.toString());
