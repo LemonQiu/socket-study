@@ -1,8 +1,5 @@
-package org.example;
+package org.example.socket.v1;
 
-
-import com.google.common.base.Strings;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +7,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.*;
 
 /**
  * @Author qiu
@@ -49,13 +45,13 @@ public class ServerSocket4Properties {
     private static final int CLI_TIMEOUT = 0;
     private static final boolean CLI_NO_DELAY = false;
 
-    private static final ThreadFactory THREAD_FACTORY = new ThreadFactoryBuilder().setNameFormat("socket-server-%d").build();
-    private static final ExecutorService THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(1024), THREAD_FACTORY, new ThreadPoolExecutor.DiscardOldestPolicy());
+//    private static final ThreadFactory THREAD_FACTORY = new ThreadFactoryBuilder().setNameFormat("socket-server-%d").build();
+//    private static final ExecutorService THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(1024), THREAD_FACTORY, new ThreadPoolExecutor.DiscardOldestPolicy());
 
     public static void main(String[] args) {
         ServerSocket serverSocket = null;
         try {
-            serverSocket = new ServerSocket(8090);
+            serverSocket = new ServerSocket(8090, BACK_LOG);
             serverSocket.setSoTimeout(SO_TIMEOUT);
             serverSocket.setReceiveBufferSize(RECEIVE_BUFFER);
             serverSocket.setReuseAddress(REUSE_ADDR);
@@ -73,13 +69,13 @@ public class ServerSocket4Properties {
                 client.setSoTimeout(CLI_TIMEOUT);
                 client.setTcpNoDelay(CLI_NO_DELAY);
 
-                THREAD_POOL_EXECUTOR.execute(() -> {
+                new Thread(() -> {
                     try {
                         InputStream inputStream = client.getInputStream();
                         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                         while (true) {
                             String data = reader.readLine();
-                            if(Strings.isNullOrEmpty(data)) {
+                            if(data != null) {
                                 client.close();
                                 break;
                             }
