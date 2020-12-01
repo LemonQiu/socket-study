@@ -11,7 +11,7 @@ import java.nio.charset.Charset;
  * @Author qiu
  * @Date 2020/11/25 23:18
  * <p>
- * 配置版的服务端socket
+ * 配置版的服务端socket(BIO)
  */
 public class ServerSocket4Properties {
 
@@ -57,7 +57,7 @@ public class ServerSocket4Properties {
             System.out.println("server socket start, port: 8090");
 
             while (true) {
-                // 从队列中获取等待的客户端的连接
+                // 从队列中获取等待的客户端的连接 如果等待队列中没有连接，则此时是阻塞的，原因是因为内核的系统调用accept()就是阻塞的
                 Socket client = serverSocket.accept();
                 client.setKeepAlive(CLI_KEEPALIVE);
                 client.setOOBInline(CLI_OOB);
@@ -74,6 +74,7 @@ public class ServerSocket4Properties {
                         InputStream inputStream = client.getInputStream();
                         while (true) {
                             byte[] bytes = new byte[4096];
+                            // read()方法也是阻塞的
                             int size = inputStream.read(bytes);
                             if(size < 0) {
                                 client.close();
