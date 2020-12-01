@@ -68,26 +68,29 @@ public class ServerSocket4Properties {
                 client.setSoTimeout(CLI_TIMEOUT);
                 client.setTcpNoDelay(CLI_NO_DELAY);
 
-                new Thread(() -> {
-                    try {
-                        System.out.println("client: " + client);
-                        InputStream inputStream = client.getInputStream();
-                        while (true) {
-                            byte[] bytes = new byte[4096];
-                            // read()方法也是阻塞的
-                            int size = inputStream.read(bytes);
-                            if(size < 0) {
-                                client.close();
-                                System.out.println("client closed.....");
-                                break;
-                            } else if(size == 0) {
-                                break;
-                            } else {
-                                System.out.println("client send msg: " + new String(bytes, 0, size, Charset.defaultCharset()));
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            System.out.println("client: " + client);
+                            InputStream inputStream = client.getInputStream();
+                            while (true) {
+                                byte[] bytes = new byte[4096];
+                                // read()方法也是阻塞的
+                                int size = inputStream.read(bytes);
+                                if(size < 0) {
+                                    client.close();
+                                    System.out.println("client closed.....");
+                                    break;
+                                } else if(size == 0) {
+                                    break;
+                                } else {
+                                    System.out.println("client send msg: " + new String(bytes, 0, size, Charset.defaultCharset()));
+                                }
                             }
+                        } catch (IOException e) {
+                            System.out.println("IOException e:" + e.toString());
                         }
-                    } catch (IOException e) {
-                        System.out.println("IOException e:" + e.toString());
                     }
                 }).start();
             }
