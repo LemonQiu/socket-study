@@ -58,7 +58,9 @@ public class ServerSocket4Properties {
 
             while (true) {
                 // 从队列中获取等待的客户端的连接 如果等待队列中没有连接，则此时是阻塞的，原因是因为内核的系统调用accept()就是阻塞的
+                System.in.read();
                 Socket client = serverSocket.accept();
+                System.out.println("accept client: " + client);
                 client.setKeepAlive(CLI_KEEPALIVE);
                 client.setOOBInline(CLI_OOB);
                 client.setReceiveBufferSize(CLI_REC_BUF);
@@ -70,18 +72,18 @@ public class ServerSocket4Properties {
 
                 new Thread(() -> {
                     try {
-                        System.out.println("client: " + client);
+
                         InputStream inputStream = client.getInputStream();
                         while (true) {
                             byte[] bytes = new byte[4096];
                             // read()方法也是阻塞的
                             int size = inputStream.read(bytes);
                             System.out.println("server read is blocking....");
-                            if(size < 0) {
+                            if (size < 0) {
                                 client.close();
                                 System.out.println("client closed.....");
                                 break;
-                            } else if(size == 0) {
+                            } else if (size == 0) {
                                 break;
                             } else {
                                 System.out.println("client send msg: " + new String(bytes, 0, size, Charset.defaultCharset()));

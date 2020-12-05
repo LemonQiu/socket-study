@@ -14,7 +14,7 @@ public class SocketChannelClient {
 
     public static void main(String[] args) {
         try {
-            InetSocketAddress serverAdd = new InetSocketAddress("192.168.56.66", 8090);
+            InetSocketAddress serverAdd = new InetSocketAddress("47.101.203.82", 8090);
 
             // 设置发送缓冲区大小
             SocketChannel clientChannel = SocketChannel.open();

@@ -13,7 +13,7 @@ public class SocketClient {
 
     public static void main(String[] args) {
         try {
-            Socket client = new Socket("192.168.56.66",8090);
+            Socket client = new Socket("47.101.203.82",8090);
 
             // 设置发送缓冲区大小
             client.setSendBufferSize(20);
