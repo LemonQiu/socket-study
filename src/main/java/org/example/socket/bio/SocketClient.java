@@ -1,4 +1,4 @@
-package org.example.socket.v1;
+package org.example.socket.bio;
 
 import java.io.*;
 import java.net.Socket;
@@ -13,7 +13,7 @@ public class SocketClient {
 
     public static void main(String[] args) {
         try {
-            Socket client = new Socket("47.101.203.82",8090);
+            Socket client = new Socket("localhost",9090);
 
             // 设置发送缓冲区大小
             client.setSendBufferSize(20);
